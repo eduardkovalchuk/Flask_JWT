@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
@@ -21,6 +21,34 @@ jwt = JWTManager(app)
 
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+
+"""
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.username
+
+def user_loader(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        username = get_jwt_identity()
+        user = UserObject(username=username)
+        if not user:
+            # This is where you would handle the error case of a user not loading
+            return jsonify({"msg": "user not found"}), 404
+
+        # Store the user so you can use it in your endpoints
+        g.user = user
+        return fn(*args, **kwargs)
+    return wrapper
+
+
+@jwt.user_loader_callback_loader
+def custom_user_loader_error(identity):
+    ret = {
+        'msg' : 'User {} not found'.format(identity)
+    }
+    return jsonify(ret), 404
+"""
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):

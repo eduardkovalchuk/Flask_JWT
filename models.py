@@ -52,7 +52,7 @@ class UserModel(db.Model):
 
     @classmethod
     def edit_user(cls, data, user_id):
-        user = UserModel.find_by_id(user_id)
+        user = UserModel.find_by_id(user_id).first()
         try:
             user.username = data['username']
             user.password = UserModel.generate_hash(data['password'])
@@ -72,7 +72,7 @@ class UserModel(db.Model):
     
     @classmethod
     def delete_one(cls, user_id):
-        user = UserModel.query.filter_by(id = user_id).first()
+        user = UserModel.find_by_id(user_id)
         #post = ContentModel.query.filter(user_id == current_user.id).all()
         try:
             #db.session.query(ContentModel).filter(user_id = current_user.id).delete()
@@ -134,24 +134,22 @@ class ContentModel(db.Model):
             return {'message' : 'Something went wrong'}
 
     @classmethod
-    def edit_content(cls, data, content_id):
-        post = ContentModel.find_by_id(content_id)
+    def edit_content(cls, data, content_id, post):
         try:
             post.text = data['text']
             db.session.commit()
             return {'message' : 'Post edit success!'}
         except:
-            return {'message' : 'Something went wrong!'}
+            return {'message' : 'Went_wrong!'}
 
     @classmethod
-    def delete_one(cls, content_id):
-        post = ContentModel.query.filter_by(id = content_id).first()
+    def delete_one(cls, content_id, post):
         try:
             db.session.delete(post)
             db.session.commit()
             return {'message' : 'Post deleted!'}
         except:
-            return {'message' : 'Something went wrong'}
+            return {'message' : 'went wrong'}
 
 class RevokedTokenModel(db.Model):
     __tablename__ = 'revoked_tokens'
