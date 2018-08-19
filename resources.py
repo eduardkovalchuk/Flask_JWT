@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models import UserModel, RevokedTokenModel, ContentModel
-from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt, get_current_user)
 
 parser = reqparse.RequestParser()
 parser.add_argument('username', help = 'This field cannot be blank', required = False)
@@ -39,7 +39,7 @@ class UserLogin(Resource):
             return {'message' : 'User {} doesn\'t exist'.format(data['username'])}
         
         if UserModel.verify_hash(data['password'], current_user.password, ):
-            access_token = create_access_token(identity = data['username'])
+            access_token = create_access_token(data['username'])
             refresh_token = create_refresh_token(identity = data['username'])
             return {
                 'message' : 'Logged in as {}'.format(current_user.username),
@@ -85,14 +85,44 @@ class  AllUsers(Resource):
     def delete(self):
         return UserModel.delete_all()
 
-class Content(Resource):
+class OneUser(Resource):
+    def get(self, user_id):
+        return UserModel.return_one(user_id)
+    
+    @jwt_required
+    def put(self, user_id):
+        data = parser.parse_args()
+        current_user = get_current_user()
+        return {'id' : current_user['id']}
+        #UserModel.edit_user(data, user_id)
+    
+    @jwt_required
+    def delete(self, user_id):
+        return UserModel.delete_one(user_id)
+
+class AllContents(Resource):
     def get(self):
         return ContentModel.return_all()
-
+    
+    @jwt_required
     def delete(self):
         return ContentModel.delete_all()
+    
+class OneContent(Resource):
+    def get(self, content_id):
+        return ContentModel.return_one(content_id)
+    
+    @jwt_required
+    def put(self, content_id):
+        data = parser.parse_args()
+        return ContentModel.edit_content(data, content_id)
+
+    @jwt_required
+    def delete(self, content_id):
+        return ContentModel.delete_one(content_id)
 
 class ContentAdd(Resource):
+    @jwt_required
     def post(self):
         data = parser.parse_args()
 
