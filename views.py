@@ -1,6 +1,7 @@
-from run import app
-from flask import jsonify
+from flask_restful import Resource
 
-@app.route('/')
-def index():
-    return jsonify({'message' : 'Hello, World!'})
+class HelloWorld(Resource):
+    def get(self):
+        return {'msg' : 'hello world'}
+
+

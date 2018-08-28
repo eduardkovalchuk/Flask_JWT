@@ -31,6 +31,7 @@ class UserRegistration(Resource):
         except:
             return {'message' : 'Something went wrong'}, 500
 
+
 class UserLogin(Resource):
     def post(self):
         data = parser.parse_args()
