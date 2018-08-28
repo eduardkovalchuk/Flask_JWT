@@ -1,6 +1,4 @@
 import unittest
-import os
-import sqlite3
 from datab import DataBase as dbase
 
 class TestDB(unittest.TestCase):
