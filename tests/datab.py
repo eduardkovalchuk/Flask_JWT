@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_data_base.db'
@@ -38,4 +39,4 @@ class DataBase(db.Model):
 
     @staticmethod
     def drop_database():
-        db.drop_all()
+        os.remove("test_data_base.db")
